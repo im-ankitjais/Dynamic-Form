@@ -1,0 +1,141 @@
+{
+    "form": [
+      {
+        "name": "Name",
+        "type": "text",
+        "required": true,
+        "regex-function": "Name",
+        "space": 12
+      },
+      {
+        "name": "Email",
+        "type": "email",
+        "required": true,
+        "regex-function": "Name",
+        "space": 12
+      },
+      {
+        "name": "Password",
+        "type": "password",
+        "regex-function": "strict-password",
+        "space": 12
+      },
+      {
+        "name": "Date of Birth",
+        "type": "date",
+        "required": true,
+        "space": 6
+      },
+      {
+        "name": "Age",
+        "type": "int",
+        "min-value": 0,
+        "max-value": 100,
+        "required": true,
+        "default": 22,
+        "space": 6
+      },
+      {
+        "name": "Story",
+        "type": "multi-line-text",
+        "required": true,
+        "min-length": 5,
+        "max-lenght": 10000,
+        "space": 12
+      },
+      {
+        "name": "Hobbies",
+        "type": "multi-select",
+        "list": [
+          "Reading",
+          "Travelling",
+          "Cooking",
+          "Hacking",
+          "Drawing"
+        ],
+        "value":[],
+        "min-choice": 1,
+        "max-choice": 4,
+        "space": 12
+      },
+      {
+        "name": "Actvity you like most",
+        "type": "single-select",
+        "list": [
+          "Coding",
+          "Hiking",
+          "Diving",
+          "Running"
+        ],
+        "required": false,
+        "space": 6
+      },
+      {
+        "name": "Rating",
+        "type": "float",
+        "min-value": 0,
+        "max-value": 5,
+        "required": true,
+        "default": 3,
+        "space": 12
+      },
+      {
+        "name": "Gender",
+        "type": "toggle",
+        "options": [
+          "male",
+          "female"
+        ],
+        "required": true,
+        "default": "female",
+        "space": 12
+      },
+      {
+        "name": "Portfolio/ Linkedin Link",
+        "type": "text",
+        "required": true,
+        "regex-function": "Name",
+        "space": 12
+      },
+      {
+        "name": "Amount",
+        "type": "amount",
+        "min-value": 0,
+        "max-value": 5000,
+        "required": true,
+        "space": 6
+      },
+      {
+        "name": "Payment Type",
+        "type": "single-select",
+        "list": [
+          "Airtem Money",
+          "Amazon Pay",
+          "BHIM",
+          "Card",
+          "Cash",
+          "Freecharge",
+          "Google Pay",
+          "ICICI Pockets",
+          "Mobikwik",
+          "PayTm",
+          "PayZapp",
+          "PhonePe",
+          "Yono (SBI)"
+        ],
+        "required": true,
+        "space": 6
+      },
+      {
+        "name": "Receive Notification",
+        "type": "switch",
+        "options": [
+          "yes",
+          "no"
+        ],
+        "default": false,
+        "required": "true",
+        "space": 12
+      }
+    ]
+  }
