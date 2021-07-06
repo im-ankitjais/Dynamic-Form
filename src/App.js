@@ -5,29 +5,29 @@ import MuiAlert from '@material-ui/lab/Alert';
 import useStyles from './assets/material'
 import SendIcon from '@material-ui/icons/Send';
 
-
+// ERROR-UI - Material_UI
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-
+// File starting point
 const App = () => {
-  const classes = useStyles();
-  const [formElements, setFormElements] = useState([]);
+  const classes = useStyles();  // material-ui styles 
+  const [formElements, setFormElements] = useState([]); // store form elements json data // also changes will be stored in this.
 
-  const [error, setError] = useState({
+  const [error, setError] = useState({     // will store errors to display popup
     open:false,
     msg:'Something Went Wrong!'
   });
 
-  const handleCloseError = (event, reason) => {
+  const handleCloseError = (event, reason) => {  // function to close error popup
     if (reason === 'clickaway') {
       return;
     }
     setError({...error,open:false});
   };
 
-  const getFormElements = () => {
+  const getFormElements = () => {      // function to fetch form-json-file
     fetch("/formElements.json")
       .then((res) => res.json())
       .then((data) => {
@@ -45,15 +45,15 @@ const App = () => {
   };
 
 
-  useEffect(() => {
-    getFormElements();
+  useEffect(() => {     // execute once the 1st render finishs
+    getFormElements(); // call function to fetch form-json-file
 }, [])
 
-const handleChange = (name, e , value=0) => {
+const handleChange = (name, e , value=0) => {  // function to handle the changes done in form fields by user.
   const newState = [...formElements];
   newState.forEach(element => {
     if (name === element.name) {
-      switch(element.type){
+      switch(element.type){  // checks which field to change
           case "checkbox":
             element['value'] = e.target.checked;
             break;
@@ -72,25 +72,29 @@ const handleChange = (name, e , value=0) => {
             break;
       }
   }})
-  setFormElements(newState);
+  setFormElements(newState); // store new changed data to state
 }
 
 
-const handleSubmit = (e) => {
-  e.preventDefault();
-  let finalObj = {};
-  let submit = true;
-  for(let i=0 ; i<formElements.length; i++){
-    if(formElements[i].value === undefined){
-      console.log(formElements[i].name);
-      setError({open:true,msg:'Some Fields are missing!'});
+const handleSubmit = (e) => {   // handle form submit 
+  e.preventDefault();           // stop the default behaviour of browser // stops page-reload due to form-submit
+  let finalObj = {};            // store form data in json format // "name" : "value"
+  
+  // perform various checks before submit
+
+  for(let i=0 ; i<formElements.length; i++){  // loop over every field
+
+    if(formElements[i].value === undefined){  // checks if any field is empty -> not entered by user 
+      setError({open:true,msg:'Some Fields are missing!'}); 
       return;
     }
-    switch(formElements[i].type){
+
+    switch(formElements[i].type){    // checks if fields are entered in correct corresponding formats 
       case "name":
         if(formElements[i].value.length <= 0){ setError({open:true,msg:'Name required!'});return; };
         break;
       case "email":
+        // REGEX Checking for Email Format.
         const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         if(!(re.test(String(formElements[i].value).toLowerCase()))){
           setError({open:true,msg:'Email Invalid!'});return; 
@@ -125,30 +129,34 @@ const handleSubmit = (e) => {
       default:
         break;
   }
-    finalObj[formElements[i].name] = formElements[i].value;
-  }
+    
+    finalObj[formElements[i].name] = formElements[i].value;   // if all checks are passed, store data in "name" : "value" pair.
 
-  console.log(error.open)
-  console.log(finalObj);
-  // alert("Please check browser console to see submit details.")
+    // post request of form (finalObj).
+    console.log(finalObj); 
+    alert("Please check console to see form POST data.");
+  }
 }
 
 
+// UI - render
 
-
-if(formElements.length > 0){
+if(formElements.length > 0){  // only render if form-json-data is fetched and stored in state.
   return (
     <div className="body">
       <div className="wrapper">
       <div className={classes.root}>
         <Paper elevation={3}>
           <div className="card-head">
-            <h2>Registration Form</h2>
+            <h2>Registration Form</h2>  {/*Form Heading*/}
           </div>
           <div className="card-body">
             <form>
                 <Grid container spacing={0}>
-              {formElements.map((item,i) => (
+                 
+                  {/*Mapping over every json form feilds*/}
+
+              {formElements.map((item,i) => ( 
                 <Grid item className={classes.grid} xs={item.space}>
                 <div className="form-name">{item.name}</div>
                 <div className="form-value">
@@ -158,6 +166,7 @@ if(formElements.length > 0){
                 </div>
                 </Grid>
               ))}
+              {/*Form Submit Button*/}
                 <Button
                     type="submit"
                     variant="contained"
@@ -169,12 +178,12 @@ if(formElements.length > 0){
                     Submit
                   </Button>
                 </Grid>
-                
             </form>
           </div>
         </Paper>
       </div>
     </div>
+              {/*Error Display UI using Material-UI -> Snackbar*/}
     <div className={classes.snackbar}>
       <Snackbar open={error.open} autoHideDuration={6000} onClose={handleCloseError}>
         <Alert onClose={handleCloseError} severity="error">
@@ -186,7 +195,7 @@ if(formElements.length > 0){
   );
 }
 else{
-  return (<>Loading...</>)
+  return (<>Loading...</>) //Display Loading till json-form is fetched and stored in state.
 }
 }
 

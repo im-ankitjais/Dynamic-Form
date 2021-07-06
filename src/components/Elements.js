@@ -3,15 +3,25 @@ import {TextField,Input,Switch,ListItemText,Checkbox,FormControlLabel,FilledInpu
 import Rating from '@material-ui/lab/Rating';
 import useStyles from '../assets/material'
 
+// File starting point
+const Element = ({data,handleChange}) => {  
+/* Props - data: individual form element,
+        handleChange: function to call when user try to change field value.
+*/
+    const classes = useStyles(); // material-ui styles 
 
-const Element = ({data,handleChange}) => {
-    const classes = useStyles();
+    /*
+    Used Material-UI Fields: 
+            -- Textfield, Input, Select, Checkbox, Rating, RadioGroup .
 
-    switch (data.type) {
+    To Know more / Documentation : visit:- https://material-ui.com/
+    */
+
+    switch (data.type) {    // checks which field to display based on element type.
         case 'text':
         case 'password':
         case 'email':
-            return (<TextField
+            return (<TextField           //for text, password, email        
                 id="filled-full-width"
                 className={classes.textField}
                 placeholder={data.name}
@@ -26,8 +36,8 @@ const Element = ({data,handleChange}) => {
                 variant="filled"
               />)
 
-        case 'date':
-            return (<TextField
+        case 'date':   
+            return (<TextField   //for date
                 id="date"
                 type="date"
                 value={data.value?data.value:''}
@@ -39,8 +49,8 @@ const Element = ({data,handleChange}) => {
                 }}
             />)
         case 'multi-line-text':
-            return (
-            <TextField
+            return ( 
+            <TextField   // multi line text area
                 id="filled-full-width"
                 className={classes.textField}
                 placeholder={data.default}
@@ -59,10 +69,10 @@ const Element = ({data,handleChange}) => {
               />
             )
         case 'multi-select':
-            return (
+            return (           
             <FormControl variant="filled" className={classes.formControl}>
             <InputLabel id="demo-mutiple-checkbox-label">Select</InputLabel>
-            <Select
+            <Select             //for multiple select options , checkboxes
                 id="demo-mutiple-checkbox"
                 multiple
                 value={data.value?data.value:[]}
@@ -70,7 +80,7 @@ const Element = ({data,handleChange}) => {
                 input={<Input />}
                 renderValue={(selected) => selected.join(', ')}
               >
-              {data.list.length > 0 && data.list.map(name => (
+              {data.list.length > 0 && data.list.map(name => (      // mapping over the list of options
                 <MenuItem key={name} value={name}>
                 <Checkbox checked={data.value?data.value.indexOf(name) > -1:false} />
                 <ListItemText primary={name} />
@@ -81,7 +91,7 @@ const Element = ({data,handleChange}) => {
             return (
             <FormControl variant="filled" className={classes.formControl}>
             <InputLabel id="demo-mutiple-checkbox-label">Select</InputLabel>
-            <Select
+            <Select                 //for single select dropdown
                 native
                 value={data.value?data.value:''}
                 onChange={(e) => handleChange(data.name,e)}
@@ -91,12 +101,12 @@ const Element = ({data,handleChange}) => {
                 }}
               >
               <option aria-label="None" value="" />
-              {data.list.map(name => (
+              {data.list.map(name => (              // mapping over the list of options
                 <option value={name}>{name}</option>
               ))}
               </Select></FormControl>)
         case 'int':
-            return (<TextField
+            return (<TextField              // for age int value
                 id="standard-number"
                 type="number"
                 defaultValue={data.default}
@@ -112,7 +122,7 @@ const Element = ({data,handleChange}) => {
                 }}
               />)
         case 'float':
-            return (<Rating
+            return (<Rating           // for rating stars 1-5
                 name="simple-controlled"
                 required={data.required}
                 defaultValue={data.default}
@@ -122,7 +132,7 @@ const Element = ({data,handleChange}) => {
                 }}
               />)
         case 'toggle':
-            return (
+            return (           // for radio-group options // single select
             <RadioGroup className={classes.radioInput}  aria-label={data.name} name={data.name} value={data.value?data.value:data.default} onChange={(e) => handleChange(data.name,e)}>
                 {data.options.map(opt => (
                     <FormControlLabel value={opt} control={<Radio />} label={opt} />
@@ -132,7 +142,7 @@ const Element = ({data,handleChange}) => {
         case 'amount':
             return (
                 <FormControl fullWidth className={classes.textField} variant="filled">
-                    <FilledInput
+                    <FilledInput          // for amount field with currency sign // more options available on website:https://material-ui.com/ 
                         id="filled-adornment-amount"
                         type="number"
                         inputProps={{
@@ -146,7 +156,7 @@ const Element = ({data,handleChange}) => {
             )
         case 'switch':
             return( 
-                <Switch
+                <Switch   // for toggle options // yes/no
                     checked={data.value?data.value:data.default}
                     onChange={(e) => handleChange(data.name,e)}
                     color="primary"
@@ -154,11 +164,11 @@ const Element = ({data,handleChange}) => {
                     inputProps={{ 'aria-label': 'primary checkbox' }}
                 />
             )
-        default:
+        default:  // if form field type does not match, cannot display that field.
             return null;
     }
 
 
 }
 
-export default Element
+export default Element     // exporting as default
