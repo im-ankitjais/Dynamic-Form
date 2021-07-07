@@ -20,6 +20,7 @@ const Element = ({data,handleChange}) => {
     switch (data.type) {    // checks which field to display based on element type.
         case 'text':
         case 'password':
+        case 'link':
         case 'email':
             return (<TextField           //for text, password, email        
                 id="filled-full-width"

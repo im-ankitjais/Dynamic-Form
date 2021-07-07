@@ -4,14 +4,14 @@
         "name": "Name",
         "type": "text",
         "required": true,
-        "regex-function": "Name",
+        "regex-function": "name",
         "space": 12
       },
       {
         "name": "Email",
         "type": "email",
         "required": true,
-        "regex-function": "Name",
+        "regex-function": "email",
         "space": 12
       },
       {
@@ -92,15 +92,15 @@
       },
       {
         "name": "Portfolio/ Linkedin Link",
-        "type": "text",
+        "type": "link",
         "required": true,
-        "regex-function": "Name",
+        "regex-function": "url",
         "space": 12
       },
       {
         "name": "Amount",
         "type": "amount",
-        "min-value": 0,
+        "min-value": 5,
         "max-value": 5000,
         "required": true,
         "space": 6

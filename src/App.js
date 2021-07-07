@@ -4,7 +4,7 @@ import {Grid,Snackbar,Button,Paper} from '@material-ui/core';
 import MuiAlert from '@material-ui/lab/Alert';
 import useStyles from './assets/material'
 import SendIcon from '@material-ui/icons/Send';
-import {regex} from './assets/regexHelper'
+import {nameRegex,emailRegex,passwordRegex,urlRegex} from './assets/regexHelper'
 // ERROR-UI - Material_UI
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -14,7 +14,6 @@ function Alert(props) {
 const App = () => {
   const classes = useStyles();  // material-ui styles 
   const [formElements, setFormElements] = useState([]); // store form elements json data // also changes will be stored in this.
-
   const [error, setError] = useState({     // will store errors to display popup
     open:false,
     msg:'Something Went Wrong!'
@@ -33,8 +32,12 @@ const App = () => {
       .then((data) => {
         const newState = [...data["form"]];
         newState.forEach(element => {
-          if(element['value'] === undefined && element['default'] != undefined){
-            element['value'] = element['default'];
+          if(element['value'] === undefined){
+            if(element['default'] != undefined){
+              element['value'] = element['default'];
+            }else{
+              element['value'] = '';
+            }
           }
         })
         setFormElements(newState);
@@ -84,47 +87,66 @@ const handleSubmit = (e) => {   // handle form submit
 
   for(let i=0 ; i<formElements.length; i++){  // loop over every field
 
-    if(formElements[i].value === undefined){  // checks if any field is empty -> not entered by user 
-      setError({open:true,msg:'Some Fields are missing!'}); 
-      return;
-    }
-
     switch(formElements[i].type){    // checks if fields are entered in correct corresponding formats 
-      case "name":
-        if(formElements[i]['regex-function'] == 'name' && regex.name(formElements[i].value)){ setError({open:true,msg:'Name required!'});return; };
+      case "text":
+        // REGEX Checking for Name Format.
+        if(formElements[i].required == true){ 
+          if((formElements[i]['regex-function'] == 'name' && !nameRegex(formElements[i].value)) || formElements[i].value == ''){ setError({open:true,msg:`${formElements[i].name} value Invalid!`});return; };
+        }
         break;
       case "email":
         // REGEX Checking for Email Format.
-        if(formElements[i]['regex-function'] == 'email' && regex.email(formElements[i].value)){
-          setError({open:true,msg:'Email Invalid!'});return; 
+        if(formElements[i]['regex-function'] == 'email'){
+          if(!emailRegex(formElements[i].value)){
+          setError({open:true,msg:`${formElements[i].name} Invalid!`});return;
+          } 
         }
         break;
       case "password":
-        if(formElements[i]['regex-function'] == 'password' && regex.password(formElements[i].value)){ setError({open:true,msg:'Choose strong Password!'});return;};
+        // REGEX Checking for strict-password Format.
+        if(formElements[i]['regex-function'] == 'strict-password'){
+          if(!passwordRegex(formElements[i].value)){ setError({open:true,msg:'Choose strong Password!'});return;};
+        }
         break;
       case "int":
-        if(parseInt(formElements[i].value) <= 0 || parseInt(formElements[i].value) > 100){ setError({open:true,msg:'Age should be between 0-100'});return;};
+      if(formElements[i].required == true && (parseInt(formElements[i].value) <= formElements[i]['min-value'] || parseInt(formElements[i].value) > formElements[i]['max-value'])){ setError({open:true,msg:`${formElements[i].name} should be between ${formElements[i]['min-value']}-${formElements[i]['max-value']}`});return;};
         break;
       case "multi-line-text":
-        if(formElements[i].value.length <= formElements[i]['min-length'] || formElements[i].value.length > formElements[i]['max-length']){ setError({open:true,msg:'Invalid length of characters in multiline Text'});return;};
+        if(formElements[i].required == true && (formElements[i].value.length <= formElements[i]['min-length'] || formElements[i].value.length > formElements[i]['max-length'])){ setError({open:true,msg:`Invalid length of characters in ${formElements[i].name}`});return;};
         break;
       case "multi-select":
-        if(formElements[i].value.length < 1){ setError({open:true,msg:'Choose atleast 1 option'});return;};
+        if(formElements[i].value.length < formElements[i]['min-choice'] || formElements[i].value.length > formElements[i]['max-choice']){ setError({open:true,msg:`Min:${formElements[i]['min-choice']}Max:${formElements[i]['max-choice']} are allowed in ${formElements[i].name}.`});return;};
         break;
       case "single-select":
-        if(formElements[i].value === '' && formElements[i].required == true){ setError({open:true,msg:'Single Choice Field required'});return;};
+        if(formElements[i].value === '' && formElements[i].required == true){ setError({open:true,msg:`${formElements[i].name} required`});return;};
         break;
       case "float":
-        if(formElements[i].value < formElements[i]['min-value'] || formElements[i].value > formElements[i]['max-value']){ setError({open:true,msg:'Rating should hold 1-5.'});return;};
+        if(formElements[i].required == true && (formElements[i].value < formElements[i]['min-value'] || formElements[i].value > formElements[i]['max-value'])){ setError({open:true,msg:`${formElements[i].name} should hold ${formElements[i]['min-value']}-${formElements[i]['max-value']}.`});return;};
         break;
       case "toggle":
-        if(formElements[i].value === '' && formElements[i].required == true){ setError({open:true,msg:'Gender Required'});return;};
+        if(formElements[i].value === '' && formElements[i].required == true){ setError({open:true,msg:`${formElements[i]['name']} Required`});return;};
         break;
       case "link":
+        if(formElements[i].required == true){
+          if(formElements[i].value === '' || (formElements[i]['regex-function'] == 'url' && !urlRegex(formElements[i].value))){
+          setError({open:true,msg:`${formElements[i].name} Invalid!`});return;
+          } 
+        }
+        break;
+      case "date":
+        if(formElements[i].required == true && formElements[i].value==''){setError({open:true,msg:`${formElements[i]['name']} Required`});return;}
         break;
       case "amount":
-        if(parseInt(formElements[i].value) < formElements[i]['min-value'] || parseInt(formElements[i].value) > formElements[i]['max-value']){ setError({open:true,msg:'Amount value invalid!'});return;};
+        console.log(formElements[i]['min-value'])
+        console.log(parseInt(formElements[i].value))
+        if(formElements[i].required == true){
+          if(formElements[i].value == '' || (parseInt(formElements[i].value) < formElements[i]['min-value'] || parseInt(formElements[i].value) > formElements[i]['max-value'])){
+            setError({open:true,msg:`${formElements[i]['name']} value Should hold between ${formElements[i]['min-value']}-${formElements[i]['max-value']}`});return;
+          }
+        }
         break;
+      case "switch":
+        if(formElements[i].required == true && formElements[i].value === ''){setError({open:true,msg:`${formElements[i]['name']} field Required`});return;}
       default:
         break;
   }
@@ -134,6 +156,7 @@ const handleSubmit = (e) => {   // handle form submit
   }
   // post request of form (finalObj).
   setError({open:false,msg:''})
+  console.log("FORM POST DATA:-"); 
   console.log(finalObj); 
   alert("Please check console to see form POST data.");
 }
