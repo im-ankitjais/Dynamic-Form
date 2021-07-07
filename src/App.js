@@ -4,7 +4,7 @@ import {Grid,Snackbar,Button,Paper} from '@material-ui/core';
 import MuiAlert from '@material-ui/lab/Alert';
 import useStyles from './assets/material'
 import SendIcon from '@material-ui/icons/Send';
-
+import {regex} from './assets/regexHelper'
 // ERROR-UI - Material_UI
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -91,17 +91,16 @@ const handleSubmit = (e) => {   // handle form submit
 
     switch(formElements[i].type){    // checks if fields are entered in correct corresponding formats 
       case "name":
-        if(formElements[i].value.length <= 0){ setError({open:true,msg:'Name required!'});return; };
+        if(formElements[i]['regex-function'] == 'name' && regex.name(formElements[i].value)){ setError({open:true,msg:'Name required!'});return; };
         break;
       case "email":
         // REGEX Checking for Email Format.
-        const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        if(!(re.test(String(formElements[i].value).toLowerCase()))){
+        if(formElements[i]['regex-function'] == 'email' && regex.email(formElements[i].value)){
           setError({open:true,msg:'Email Invalid!'});return; 
         }
         break;
       case "password":
-        if(formElements[i].value.length <= 6){ setError({open:true,msg:'Choose strong Password!'});return;};
+        if(formElements[i]['regex-function'] == 'password' && regex.password(formElements[i].value)){ setError({open:true,msg:'Choose strong Password!'});return;};
         break;
       case "int":
         if(parseInt(formElements[i].value) <= 0 || parseInt(formElements[i].value) > 100){ setError({open:true,msg:'Age should be between 0-100'});return;};
@@ -132,10 +131,11 @@ const handleSubmit = (e) => {   // handle form submit
     
     finalObj[formElements[i].name] = formElements[i].value;   // if all checks are passed, store data in "name" : "value" pair.
 
-    // post request of form (finalObj).
-    console.log(finalObj); 
-    alert("Please check console to see form POST data.");
   }
+  // post request of form (finalObj).
+  setError({open:false,msg:''})
+  console.log(finalObj); 
+  alert("Please check console to see form POST data.");
 }
 
 
