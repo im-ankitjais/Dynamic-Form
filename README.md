@@ -32,3 +32,8 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 ### `Change Form Fields`
 Edit 'formElements.json' file in public folder.
 
+### `Regex File Validation` -(src/assets/regexHelper.js) 
+Currently following fields are validated using regex:-
+`name, email, password, url`
+*-> Pass anyone regex-function name in json form element to validate. 
+
